@@ -1,0 +1,64 @@
+#include <bits/stdc++.h>
+using namespace std;
+
+// Function to return precedence of operators
+int precedence(char op) {
+    if (op == '+' || op == '-')
+        return 1;
+    else if (op == '*' || op == '/')
+        return 2;
+    else if (op == '^')
+        return 3;
+    else
+        return 0;
+}
+
+// Function to convert infix expression to postfix expression
+string infixToPostfix(string infix) {
+    stack<char> st;
+    string postfix = "";
+    
+    for (int i = 0; i < infix.length(); i++) {
+        char c = infix[i];
+
+        // If the scanned character is an operand, add it to output string
+        if (isalnum(c)) {          //isalnum is a function says whether the character is a alphanumeric (A-Z OR a-z ) or number (says yes for both) 
+            postfix += c;
+        }
+        // If the scanned character is an '(', push it to the stack
+        else if (c == '(') {
+            st.push('(');
+        }
+        // If the scanned character is an ')', pop from the stack until '(' is encountered
+        else if (c == ')') {
+            while (!st.empty() && st.top() != '(') {
+                postfix += st.top();
+                st.pop();
+            }
+            st.pop(); // Pop the '(' from the stack
+        }
+        // If an operator is scanned
+        else {
+            while (!st.empty() && precedence(c) <= precedence(st.top())) {
+                postfix += st.top();
+                st.pop();
+            }
+            st.push(c);
+        }
+    }
+
+    // Pop all the remaining elements from the stack
+    while (!st.empty()) {
+        postfix += st.top();
+        st.pop();
+    }
+
+    return postfix;
+}
+
+int main() {
+    string infix = "A+B*C";
+    cout << "Infix Expression: " << infix << endl;
+    cout << "Postfix Expression: " << infixToPostfix(infix) << endl;
+    return 0;
+}
